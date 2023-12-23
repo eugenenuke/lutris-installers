@@ -1,0 +1,51 @@
+name: Fallout 2
+game_slug: fallout-2
+version: GOG
+slug: fallout-2-gog
+runner: wine
+gogid: 2
+
+script:
+  game:
+    exe: drive_c/GOG Games/Fallout 2/fallout2.exe
+    prefix: $GAMEDIR
+    arch: win32
+
+  wine:
+    overrides:
+      ddraw.dll: n
+
+  installer:
+
+  files:
+  - gogsetup: N/A:Select the gog setup exe
+  - rpusetup: https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/download/v28/rpu_v28.exe
+
+  installer:
+  - task:
+      description: Creating Wine prefix
+      name: create_prefix
+      prefix: $GAMEDIR
+  - task:
+      description: Setting Windows 7 as the base OS
+      name: create_prefix
+      name: winetricks
+      app: win7
+  - task:
+      description: Installing DirectX 9
+      name: winetricks
+      app: d3dx9_43
+  - task:
+      description: Installing wmp10
+      name: winetricks
+      app: wmp10
+  - task:
+      description: Installing Fallout 2
+      name: wineexec
+      executable: gogsetup
+      args: /silent /nogui /suppressmsgboxes
+  - task:
+      description: Installing RPU
+      name: wineexec
+      executable: rpusetup
+      args: /dir="C:\GOG Games\Fallout 2"

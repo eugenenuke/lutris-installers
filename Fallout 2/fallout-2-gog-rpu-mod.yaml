@@ -1,0 +1,34 @@
+name: Fallout 2 Restoration Project, updated
+game_slug: fallout-2
+version: F2RSU
+slug: fallout-2-gog-rsu-mod
+runner: wine
+requires: fallout-2-gog
+
+script:
+  requires: fallout-2-gog
+  game:
+    exe: drive_c/GOG Games/Fallout 2/fallout2.exe
+    arch: win32
+
+  wine:
+    overrides:
+      ddraw.dll: n
+
+  files:
+  - rpusetup: https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/download/v28/rpu_v28.exe
+
+  installer:
+  - task:
+      description: Installing DirectX 9
+      name: winetricks
+      app: d3dx9_43
+  - task:
+      description: Installing wmp10
+      name: winetricks
+      app: wmp10
+  - task:
+      description: Installing RPU
+      name: wineexec
+      executable: rpusetup
+      args: /dir="C:\GOG Games\Fallout 2" /silent /suppressmsgboxes

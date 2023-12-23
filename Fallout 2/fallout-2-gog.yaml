@@ -1,0 +1,28 @@
+name: Fallout 2
+game_slug: fallout-2
+version: GOG
+slug: fallout-2-gog
+runner: wine
+gogid: 2
+
+script:
+  game:
+    exe: drive_c/GOG Games/Fallout 2/fallout2.exe
+    prefix: $GAMEDIR
+    arch: win32
+
+  files:
+  - gogsetup: "N/A:Select the gog setup exe"
+
+  installer:
+  - task:
+      name: create_prefix
+      prefix: $GAMEDIR
+  - task:
+      name: winetricks
+      app: win7
+  - task:
+      description: Installing Fallout 2
+      name: wineexec
+      executable: gogsetup
+      args: /silent /nogui /suppressmsgboxes 
