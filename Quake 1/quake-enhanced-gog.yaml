@@ -1,0 +1,71 @@
+name: Quake Enhanced
+description: Play Quake Enhanced on VKQuake
+version: GOG
+slug: quake-enhanced-gog-vkquake
+game_slug: quake-enhanced
+runner: linux
+gogid: 1739637082
+year: 1996
+notes: >
+  Includes four additional episodes: Scourge of Armagon (1997),
+  Dissolution of Eternity (1997), Dimension of the Past (2016), Dimension of the Machine (2021).
+
+  Soundtracks for the main episode, SoA and DoE are included.
+
+script:
+  game:
+    exe: $GAMEDIR/vkquake
+    launch_configs:
+      - name: "Scourge of Armagon (1997)"
+        exe: $GAMEDIR/vkquake
+        args: -hipnotic
+      - name: "Dissolution of Eternity (1997)"
+        exe: $GAMEDIR/vkquake
+        args: -rogue
+      - name: "Dimension of the Past (2016)"
+        exe: $GAMEDIR/vkquake
+        args: -dopa
+      - name: "Dimension of the Machine (2021)"
+        exe: $GAMEDIR/vkquake
+        args: -mg1
+      - name: "Capture the Flag"
+        exe: $GAMEDIR/vkquake
+        args: -ctf
+  files:
+    - gogsetup: "N/A:Select the gog setup exe"
+    - vkquake: https://github.com/Novum/vkQuake/releases/download/1.32.0/vkquake-1.32.0_linux64.tar.gz
+
+  installer:
+    - extract:
+        description: Extracting GOG installer
+        format: gog
+        file: gogsetup
+        dst: $CACHE/gogsetup
+    - extract:
+        description: Extracting vkquake
+        file: vkquake
+        dst: $CACHE/gogsetup
+    - move:
+        src: $CACHE/gogsetup/vkquake.AppImage
+        dst: $GAMEDIR/vkquake
+    - move:
+        src: $CACHE/gogsetup/QuakeEX.kpf
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/id1
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/ctf
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/dopa
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/hipnotic
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/mg1
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/rogue
+        dst: $GAMEDIR/

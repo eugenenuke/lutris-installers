@@ -1,0 +1,86 @@
+name: Quake
+description: Play Quake on VKQuake
+version: GOG
+slug: quake-gog-vkquake
+game_slug: quake
+runner: linux
+gogid: 1435828198
+year: 1996
+notes: >
+    Includes two additional episodes: Scourge of Armagon (1997) and
+    Dissolution of Eternity (1997).
+
+    Soundtracks for all episodes are included.
+
+    (!!!DO NOT SELECT EXTRA GOG CONTENT!!!)
+
+script:
+    game:
+        exe: $GAMEDIR/vkquake
+        launch_configs:
+            - name: "Scourge of Armagon (1997)"
+              exe: $GAMEDIR/vkquake
+              args: -hipnotic
+            - name: "Dissolution of Eternity (1997)"
+              exe: $GAMEDIR/vkquake
+              args: -rogue
+    files:
+        - gogsetup: "N/A:Select the gog setup exe"
+        - vkquake: https://github.com/Novum/vkQuake/releases/download/1.32.0/vkquake-1.32.0_linux64.tar.gz
+        - music_main: https://www.quaddicted.com/files/music/quake_campaign_soundtrack.zip
+        - music_ex1: https://www.quaddicted.com/files/music/quake_mp1_soundtrack.zip
+        - music_ex2: https://www.quaddicted.com/files/music/quake_mp2_soundtrack.zip
+
+    installer:
+        - extract:
+              description: Extracting GOG installer
+              format: gog
+              file: gogsetup
+              dst: $CACHE/gogsetup
+        - extract:
+              description: Extracting vkquake
+              file: vkquake
+              dst: $CACHE/gogsetup
+        - move:
+              src: $CACHE/gogsetup/vkquake.AppImage
+              dst: $GAMEDIR/vkquake
+        - extract:
+              dst: $GAMEDIR/
+              file: music_main
+        - extract:
+              dst: $GAMEDIR/
+              file: music_ex1
+        - extract:
+              dst: $GAMEDIR/
+              file: music_ex2
+        - move:
+              src: $CACHE/gogsetup/id1/PAK0.PAK
+              dst: $GAMEDIR/id1/pak0.pak
+        - move:
+              src: $CACHE/gogsetup/id1/PAK1.PAK
+              dst: $GAMEDIR/id1/pak1.pak
+        - move:
+              src: $CACHE/gogsetup/hipnotic/pak0.pak
+              dst: $GAMEDIR/hipnotic/
+        - move:
+              src: $CACHE/gogsetup/rogue/pak0.pak
+              dst: $GAMEDIR/rogue/
+    # Audio CD files
+    # - move:
+    #     src: $CACHE/gogsetup/game.cue
+    #     dst: $GAMEDIR/
+    # - move:
+    #     src: $CACHE/gogsetup/game.gog
+    #     dst: $GAMEDIR/
+    # - move:
+    #     src: $CACHE/gogsetup/gamea.cue
+    #     dst: $GAMEDIR/
+    # - move:
+    #     src: $CACHE/gogsetup/gamea.gog
+    #     dst: $GAMEDIR/
+    # - move:
+    #     src: $CACHE/gogsetup/gamed.cue
+    #     dst: $GAMEDIR/
+    # - move:
+    #     src: $CACHE/gogsetup/gamed.gog
+    #     dst: $GAMEDIR/
