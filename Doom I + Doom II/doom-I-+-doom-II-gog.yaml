@@ -7,70 +7,65 @@ runner: zdoom
 gogid: 1413291984
 year: 1993
 notes: >
-  Includes:
-  - Doom
-  - Doom II: Hell on Earth
-  - Master Levels for Doom II
-  - TNT: Evilution
-  - The Plutonia Experiment
-  - No Rest for the Living
-  - SIGIL
-  - Legacy of Rust
+  Includes the main two games and 6 addons: Doom, Doom II: Hell on Earth, Master Levels for Doom II,
+  TNT: Evilution, The Plutonia Experiment, No Rest for the Living, SIGIL, Legacy of Rust.
+
+  The remastered soundtrack can be downloaded at https://www.reddit.com/r/Doom/comments/1enyv5f/for_anyone_that_wants_to_use_the_new_doom_2_music/
 
 script:
   game:
     main_file: $GAMEDIR/
     launch_configs:
-    - name: "Doom (1993)"
-      args: -iwad "$GAMEDIR/doom.wad"
-    - name: "Doom II: Hell on Earth (1994)"
-      args: -iwad "$GAMEDIR/doom2.wad"
-    - name: "Master Levels for Doom II (1995)"
-      args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/masterlevels.wad"
-    - name: "TNT: Evilution (1996)"
-      args: -iwad "$GAMEDIR/tnt.wad"
-    - name: "The Plutonia Experiment (1996)"
-      args: -iwad "$GAMEDIR/plutonia.wad"
-    - name: "No Rest for the Living (2010)"
-      args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/nerve.wad"
-    - name: "SIGIL (2019)"
-      args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/sigil.wad"
-    - name: "Legacy of Rust (2024)"
-      args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/id1.wad"
+      - name: "Doom (1993)"
+        args: -iwad "$GAMEDIR/doom.wad"
+      - name: "Doom II: Hell on Earth (1994)"
+        args: -iwad "$GAMEDIR/doom2.wad"
+      - name: "Master Levels for Doom II (1995)"
+        args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/masterlevels.wad"
+      - name: "TNT: Evilution (1996)"
+        args: -iwad "$GAMEDIR/tnt.wad"
+      - name: "The Plutonia Experiment (1996)"
+        args: -iwad "$GAMEDIR/plutonia.wad"
+      - name: "No Rest for the Living (2010)"
+        args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/nerve.wad"
+      - name: "SIGIL (2019)"
+        args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/sigil.wad"
+      - name: "Legacy of Rust (2024)"
+        args: -iwad "$GAMEDIR/doom2.wad" -file "$GAMEDIR/id1.wad"
 
   files:
-  - gogsetup: "N/A:Select the gog setup exe"
+    - gogsetup: "N/A:Select the gog setup exe"
 
   installer:
-  - extract:
-      description: Extracting GOG installer
-      format: gog
-      file: gogsetup
-      dst: $CACHE/gogsetup
-  - move:
-      src: $CACHE/gogsetup/doom.wad
-      dst: $GAMEDIR/
-  - move:
-      src: $CACHE/gogsetup/doom2.wad
-      dst: $GAMEDIR/
-  - move:
-      src: $CACHE/gogsetup/masterlevels.wad
-      dst: $GAMEDIR/
-  - move:
-      src: $CACHE/gogsetup/tnt.wad
-      dst: $GAMEDIR/
-  - move:
-      src: $CACHE/gogsetup/plutonia.wad
-      dst: $GAMEDIR/
-  - move:
-      src: $CACHE/gogsetup/nerve.wad
-      dst: $GAMEDIR/
-  - move:
-      src: $CACHE/gogsetup/sigil.wad
-      dst: $GAMEDIR/
-  - move:
-      src: $CACHE/gogsetup/id1.wad
-      dst: $GAMEDIR/
+    - extract:
+        description: Extracting GOG installer
+        format: gog
+        file: gogsetup
+        dst: $CACHE/gogsetup
+    - move:
+        src: $CACHE/gogsetup/doom.wad
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/doom2.wad
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/masterlevels.wad
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/tnt.wad
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/plutonia.wad
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/nerve.wad
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/sigil.wad
+        dst: $GAMEDIR/
+    - move:
+        src: $CACHE/gogsetup/id1.wad
+        dst: $GAMEDIR/
   # For modding
   # - move:
   #     src: $CACHE/gogsetup/id1-res.wad
@@ -88,7 +83,7 @@ script:
   #     src: $CACHE/gogsetup/iddm1.wad
   #     dst: $GAMEDIR/
   # the ogg music in extras.wad cannot be used in GZDoom
-  # see https://www.reddit.com/r/Doom/comments/1enyv5f/for_anyone_that_wants_to_use_the_new_doom_2_music/ 
+  # see https://www.reddit.com/r/Doom/comments/1enyv5f/for_anyone_that_wants_to_use_the_new_doom_2_music/
   # - move:
   #     src: $CACHE/gogsetup/extras.wad
   #     dst: $GAMEDIR/
