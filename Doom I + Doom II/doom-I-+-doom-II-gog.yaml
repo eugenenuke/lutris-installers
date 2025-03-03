@@ -6,9 +6,16 @@ game_slug: doom-doom-ii
 runner: zdoom
 gogid: 1413291984
 year: 1993
-notes: >
-  Includes the main two games and 6 addons: Doom, Doom II: Hell on Earth, Master Levels for Doom II,
-  TNT: Evilution, The Plutonia Experiment, No Rest for the Living, SIGIL, Legacy of Rust.
+notes: |
+  Includes the main two games and 6 addons:
+  - Doom
+  - Doom II: Hell on Earth
+  - Master Levels for Doom II
+  - TNT: Evilution
+  - The Plutonia Experiment
+  - No Rest for the Living
+  - SIGIL
+  - Legacy of Rust
 
   The remastered soundtrack can be downloaded at https://www.reddit.com/r/Doom/comments/1enyv5f/for_anyone_that_wants_to_use_the_new_doom_2_music/
 

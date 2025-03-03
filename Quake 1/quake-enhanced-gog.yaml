@@ -6,9 +6,12 @@ game_slug: quake-enhanced
 runner: linux
 gogid: 1739637082
 year: 1996
-notes: >
-  Includes four additional episodes: Scourge of Armagon (1997),
-  Dissolution of Eternity (1997), Dimension of the Past (2016), Dimension of the Machine (2021).
+notes: |
+  Includes four additional episodes:
+  - Scourge of Armagon (1997)
+  - Dissolution of Eternity (1997)
+  - Dimension of the Past (2016)
+  - Dimension of the Machine (2021)
 
   Soundtracks for the main episode, SoA and DoE are included.
 
