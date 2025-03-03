@@ -1,0 +1,46 @@
+name: "Warhammer: Shadow of the Horned Rat"
+game_slug: warhammer-shadow-of-the-horned-rat
+version: GOG
+slug: warhammer-shadow-of-the-horned-rat-gog
+runner: wine
+gogid: 1433929853
+year: 1995
+notes: |
+  GOG edition of "Warhammer: Shadow of the Horned Rat" for Win32 Wine environment.
+  Fullscreen mode doesn't work properly on Wine-GE - use the system version.
+
+  Make sure that your Wine environment can play MIDI to enjoy music withing the game.
+  Check the following docs:
+  - https://wiki.archlinux.org/title/FluidSynth#ALSA_daemon_mode
+  - https://gitlab.winehq.org/wine/wine/-/wikis/MIDI
+
+script:
+  game:
+    exe: drive_c/GOG Games/Warhammer - Shadow of the Horned Rat/WARFB/WHSHR.EXE
+    prefix: $GAMEDIR
+    arch: win32
+
+  files:
+    - gogsetup: "N/A:Select the gog setup exe"
+
+  installer:
+    - task:
+        description: Creating Wine prefix
+        name: create_prefix
+        prefix: $GAMEDIR
+    - extract:
+        description: Extracting GOG installer
+        format: gog
+        file: gogsetup
+        dst: $CACHE/gogsetup
+    - move:
+        src: $CACHE/gogsetup/__support/sys32/RLDDF.DLL
+        dst: $GAMEDIR/drive_c/windows/system32/
+    - move:
+        src: $CACHE/gogsetup/__support/sys32/RL
+        dst: $GAMEDIR/drive_c/windows/system32/
+    - task:
+        description: "Installing Warhammer: Shadow of the Horned Rat"
+        name: wineexec
+        executable: gogsetup
+        args: /silent /nogui /suppressmsgboxes
