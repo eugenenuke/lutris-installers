@@ -1,0 +1,88 @@
+name: "Warhammer: Dark Omen"
+game_slug: warhammer-dark-omen
+version: CDROM
+slug: warhammer-dark-omen-do-mod-cdrom
+runner: wine
+year: 1998
+notes: |
+  This installation script requires the game's CD and the "DO Mod Pack 2020" [1].
+  This mod pack enables the game to run on modern systems and includes additional
+  campaigns.
+
+  The "DO Mod Pack 2020" must be downloaded via the direct link [2] or from the
+  game's forum thread [1].
+
+  dgVoodoo2 v2.8.2 is enabled by this installation script and can be further
+  customized by editing the `~/.local/share/lutris/runtime/dgvoodoo2/v2.8.2/dgVoodoo.conf`
+  file.
+
+  Install the "English" version of the game. Other languages are not supported
+  by the Mod Pack.
+
+  - [1] https://forum.dark-omen.org/help-section/read-me-ultimate-dark-omen-xpvistawin7win81win10-game-fixes-t111.0.html
+  - [2] https://1drv.ms/u/s!AsyWBCOxh51ViNQVmiH8FtY80TnY7w?e=AKawWz
+
+script:
+  game:
+    exe: drive_c/Program Files (x86)/Dark Omen/PRG_ENG/EngRel.exe
+    prefix: $GAMEDIR
+    arch: win64
+
+  files:
+    - modpack: "N/A:Select the DO Mod Pack 2020's zip file"
+
+  installer:
+    - insert-disc:
+        requires: darkomen
+    - task:
+        description: Creating Wine prefix
+        name: create_prefix
+        prefix: $GAMEDIR
+    - write_config:
+        file: $GAMEDIR/drive_c/setup.iss
+        data:
+          InstallShield Silent:
+            Version: v5.00.000
+            File: Response File
+          DlgOrder:
+            Dlg0: SdWelcome-0
+            Count: 5
+            Dlg1: SdSetupTypeEx-0
+            Dlg2: SdAskDestPath-0
+            Dlg3: AskYesNo-0
+            Dlg4: SdFinish-0
+          SdWelcome-0:
+            Result: 1
+          SdSetupTypeEx-0:
+            Result: Maximum
+          SdAskDestPath-0:
+            szDir: C:\Program Files (x86)\Dark Omen
+            Result: 1
+          Application:
+            Name: Dark Omen
+            Version: 1.0
+            Company: Electronic Arts
+          AskYesNo-0:
+            Result: 0
+          SdFinish-0:
+            Result: 1
+            bOpt1: 0
+            bOpt2: 0
+    - task:
+        description: "Installing Warhammer: Dark Omen"
+        name: wineexec
+        executable: $DISC/setup.exe
+        args: /s /f1"C:\setup.iss"
+    - move:
+        src: $GAMEDIR/drive_c/Program Files (x86)/Dark Omen/PRG_ENG
+        dst: $GAMEDIR/drive_c/Program Files (x86)/Dark Omen/PRG_ENGOrig
+    - merge:
+        src: $DISC/darkomen/movies
+        dst: $GAMEDIR/drive_c/Program Files (x86)/Dark Omen/movies
+    - extract:
+        description: "Installing DO Mod Pack 2020"
+        file: modpack
+        dst: $GAMEDIR/drive_c/Program Files (x86)/Dark Omen
+  wine:
+    dgvoodoo2: true
+    dgvoodoo2_version: v2.8.2
