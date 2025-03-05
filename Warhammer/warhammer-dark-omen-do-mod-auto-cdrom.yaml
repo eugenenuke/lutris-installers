@@ -10,6 +10,10 @@ notes: |
   The "DO Mod Pack 2020" [1], that makes the game playable on modern systems
   and brings some additional campains, will be downloaded during the installation.
 
+  dgVoodoo2 v2.8.2 is enabled by this installation script and can be further
+  customized by editing the `~/.local/share/lutris/runtime/dgvoodoo2/v2.8.2/dgVoodoo.conf`
+  file.
+
   [1] https://forum.dark-omen.org/help-section/read-me-ultimate-dark-omen-xpvistawin7win81win10-game-fixes-t111.0.html
 
 script:
