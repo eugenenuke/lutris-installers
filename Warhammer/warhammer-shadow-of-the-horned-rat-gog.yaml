@@ -44,3 +44,6 @@ script:
         name: wineexec
         executable: gogsetup
         args: /silent /nogui /suppressmsgboxes
+  system:
+    gamescope: true
+    gamescope_game_res: 640x480

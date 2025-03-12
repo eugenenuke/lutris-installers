@@ -86,3 +86,5 @@ script:
   wine:
     dgvoodoo2: true
     dgvoodoo2_version: v2.8.2
+  system:
+    gamescope: true
