@@ -9,8 +9,6 @@ notes: |
 
   As the game requires strictly 256-color display mode, DxWnd is used to enforce it [1].
 
-  Fullscreen mode doesn't work properly on Wine-GE - use the system's version.
-
   Make sure that your Wine environment can play MIDI to enjoy music within the game.
   Check the following docs:
   - https://wiki.archlinux.org/title/FluidSynth#ALSA_daemon_mode
@@ -44,7 +42,9 @@ script:
         dst: $GAMEDIR/drive_c/windows/system32/
     - copy:
         src: $DISC/rmorph/rl
-        dst: $GAMEDIR/drive_c/windows/system32/
+        dst: $GAMEDIR/drive_c/windows/system32/rl
+    - execute:
+        command: mkdir "$GAMEDIR/drive_c/SotHR/TEMP" "$GAMEDIR/drive_c/SotHR/UPDATE"
     - extract:
         description: "Installing DxWnd"
         file: dxwndsetup
@@ -67,7 +67,7 @@ script:
         name: set_regedit
         path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB
         key: "options"
-        value: '3,1,1,1,1,1,1,1'
+        value: "3,1,1,1,1,1,1,1"
     - task:
         name: set_regedit
         path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\SaveDir
@@ -103,3 +103,13 @@ script:
         path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\InstallDir
         key: ""
         value: C:\\SotHR
+    - write_file:
+        file: $GAMEDIR/post-exit.sh
+        content: |
+          #!/bin/bash
+          pkill -9 gamescopereaper
+    - chmodx: $GAMEDIR/post-exit.sh
+  system:
+    gamescope: true
+    gamescope_game_res: 640x480
+    postexit_command: $GAMEDIR/post-exit.sh
