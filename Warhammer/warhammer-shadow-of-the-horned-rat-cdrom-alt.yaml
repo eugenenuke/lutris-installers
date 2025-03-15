@@ -1,0 +1,124 @@
+name: "Warhammer: Shadow of the Horned Rat"
+game_slug: warhammer-shadow-of-the-horned-rat
+version: CDROM
+slug: warhammer-shadow-of-the-horned-rat-cdrom-alt
+runner: wine
+year: 1995
+notes: |
+  This installation script requires you to have the original game's CD.
+
+  As the game requires strictly 256-color display mode, DxWnd is used to enforce it [1].
+
+  Make sure that your Wine environment can play MIDI to enjoy music within the game.
+  Check the following docs:
+  - https://wiki.archlinux.org/title/FluidSynth#ALSA_daemon_mode
+  - https://gitlab.winehq.org/wine/wine/-/wikis/MIDI
+
+  [1] https://gitlab.winehq.org/wine/wine/-/wikis/256-Color-Mode
+
+script:
+  game:
+    exe: drive_c/dxwnd/dxwnd.exe
+    args: /R:1 /C:../SotHR/dxwnd.ini
+    prefix: $GAMEDIR
+    arch: win32
+
+  files:
+    - dxwndsetup: https://dxwnd.org/wp-content/uploads/2024/10/Dxwnd-v2_06_06_build.zip
+
+  installer:
+    - insert-disc:
+        requires: WARSTART.EXE
+    - task:
+        description: Creating Wine prefix
+        name: create_prefix
+        prefix: $GAMEDIR
+    - copy:
+        description: "Installing the game"
+        src: $DISC/WARFB/ENG/FILE
+        dst: $GAMEDIR/drive_c/SotHR/FILE
+    - copy:
+        src: $DISC/WARFB/ENG/GENERIC
+        dst: $GAMEDIR/drive_c/SotHR/
+    - copy:
+        src: $DISC/WARFB/ENG/WIN95
+        dst: $GAMEDIR/drive_c/SotHR/
+    - copy:
+        src: $DISC/WARFB/REMOTE
+        dst: $GAMEDIR/drive_c/SotHR/REMOTE
+    - copy:
+        src: $DISC/rmorph/rlddf.dll
+        dst: $GAMEDIR/drive_c/windows/system32/
+    - copy:
+        src: $DISC/rmorph/rl
+        dst: $GAMEDIR/drive_c/windows/system32/rl
+    - execute:
+        command: mkdir "$GAMEDIR/drive_c/SotHR/TEMP" "$GAMEDIR/drive_c/SotHR/UPDATE"
+    - extract:
+        description: "Installing DxWnd"
+        file: dxwndsetup
+        dst: $GAMEDIR/drive_c/dxwnd
+    - write_config:
+        file: $GAMEDIR/drive_c/SotHR/dxwnd.ini
+        data:
+          window:
+            showhelp: "NO"
+            exepath: C:\SotHR\
+          target:
+            title0: WHSHR
+            path0: C:\SotHR\WHSHR.EXE
+            flagh0: 18
+            flagg0: 1073741936
+            flagk0: 67174400
+            flagl0: 8421376
+            flagv0: -2147213312
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB
+        key: "options"
+        value: "3,1,1,1,1,1,1,1"
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\SaveDir
+        key: ""
+        value: C:\\SotHR\\TEMP
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\LocalDir
+        key: ""
+        value: C:\\SotHR\\File
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\RemoteDir
+        key: ""
+        value: C:\\SotHR\\Remote
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\UpdateDir
+        key: ""
+        value: C:\\SotHR\\Update
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\InstallOption
+        key: ""
+        value: Maximum
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\Language
+        key: ""
+        value: ENG
+    - task:
+        name: set_regedit
+        path: HKEY_LOCAL_MACHINE\SOFTWARE\Mindscape\WarHammerFB\InstallDir
+        key: ""
+        value: C:\\SotHR
+    - write_file:
+        file: $GAMEDIR/post-exit.sh
+        content: |
+          #!/bin/bash
+          pkill -9 gamescopereaper
+    - chmodx: $GAMEDIR/post-exit.sh
+  system:
+    gamescope: true
+    gamescope_game_res: 640x480
+    postexit_command: $GAMEDIR/post-exit.sh
