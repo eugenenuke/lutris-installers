@@ -7,7 +7,6 @@ gogid: 1433929853
 year: 1995
 notes: |
   GOG edition of "Warhammer: Shadow of the Horned Rat" for Win32 Wine environment.
-  Fullscreen mode doesn't work properly on Wine-GE - use the system's version.
 
   Make sure that your Wine environment can play MIDI to enjoy music within the game.
   Check the following docs:
