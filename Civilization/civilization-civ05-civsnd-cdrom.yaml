@@ -1,0 +1,71 @@
+name: "Sid Meier's Civilization"
+game_slug: civilization
+version: CDROM
+slug: civilization-civ05-civsnd-cdrom
+runner: dosbox
+year: 1991
+notes: |
+  This installation script requires you to have the game's CD.
+
+  This version installs CIV.EXE v474.05 patch (latest) and the updated CIVSND
+  version of AdLib/SoundBlaster driver, which supports OPL3 (better MIDI and
+  stereo sound).
+
+  It's recommended to have fluidsynth configured in your linux system with some
+  advanced sound font like "Arachno SoundFont" [1].
+
+  On the game start select:
+  - 1) VGA (256 color)
+  - 4) AdLib/Sound Blaster
+  - 1) Mouse and Keyboard
+
+  Enjoy!
+
+  [1] https://www.arachnosoft.com/main/soundfont.php
+
+script:
+  game:
+    config_file: dosbox.conf
+    main_file: CIV.EXE
+    prefix: $GAMEDIR
+
+  files:
+    - civsnd:
+        url: https://web.archive.org/web/20140904064027if_/http://apolyton.net/local_links/jump/c-patches-422/5299
+        # url: https://forums.civfanatics.com/attachments/civsnd-zip.396034/
+        filename: civsnd.zip
+    - civ_v5:
+        url: https://web.archive.org/web/20140904064030if_/http://apolyton.net/local_links/jump/c-patches-422/5298
+        filename: civv05.zip
+
+  installer:
+    - insert-disc:
+        requires: harddisk/english
+    - write_config:
+        file: $GAMEDIR/dosbox.conf
+        data:
+          sdl:
+            fullscreen: true
+          midi:
+            mididevice: auto
+    - copy:
+        description: Installing Sid Meier's Civilization
+        src: $DISC/harddisk/english
+        dst: $GAMEDIR
+    - move:
+        src: $GAMEDIR/civ.exe
+        dst: $GAMEDIR/civ.exe.bak
+    - move:
+        src: $GAMEDIR/asound.cvl
+        dst: $GAMEDIR/asound.cvl.bak
+    - extract:
+        description: Installing CIV_v05 patch
+        file: civ_v5
+        dst: $GAMEDIR
+    - extract:
+        description: Installing CIVSND patch
+        file: civsnd
+        dst: $GAMEDIR
+    - move:
+        src: $GAMEDIR/PSOUND.CVL
+        dst: $GAMEDIR/asound.cvl

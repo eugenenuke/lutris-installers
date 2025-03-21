@@ -1,0 +1,32 @@
+name: "Sid Meier's Civilization"
+game_slug: civilization
+version: CDROM
+slug: civilization-cdrom
+runner: dosbox
+year: 1991
+notes: |
+  This installation script requires you to have the game's CD.
+
+  On the game start select:
+  - 1) VGA (256 color)
+  - 4) AdLib/Sound Blaster
+  - 1) Mouse and Keyboard
+
+script:
+  game:
+    config_file: dosbox.conf
+    main_file: civ.exe
+    prefix: $GAMEDIR
+
+  installer:
+    - insert-disc:
+        requires: harddisk/english
+    - write_config:
+        file: $GAMEDIR/dosbox.conf
+        data:
+          sdl:
+            fullscreen: true
+    - copy:
+        description: Installing Sid Meier's Civilization
+        src: $DISC/harddisk/english
+        dst: $GAMEDIR
