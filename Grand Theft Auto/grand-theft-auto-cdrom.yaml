@@ -1,0 +1,65 @@
+name: "Grand Theft Auto"
+game_slug: grand-theft-auto
+version: CDROM
+slug: grand-theft-auto-cdrom
+runner: dosbox
+year: 1997
+notes: |
+  This installation script requires you to have the game's CD.
+
+  This installation script does not enable any 3Dfx support, so the game's
+  graphics is running on the CPU (==lower graphics quality). The good thing
+  is that it should run on any version of DosBox.
+
+  Press F11 in the game to switch the game's resolution.
+
+script:
+  files:
+    - cdimg: "N/A:Select the game's ISO/CUE file"
+
+  game:
+    main_file: $GAMEDIR/gta.bat
+    config_file: $GAMEDIR/dosbox.conf
+    prefix: $GAMEDIR
+    args: -c "imgmount d $cdimg -t iso"
+
+  installer:
+    - insert-disc:
+        requires: gta.bat
+    - copy:
+        description: Installing Grand Theft Auto
+        src: $DISC/gtados
+        dst: $GAMEDIR/gtados
+    - copy:
+        description: Installing Grand Theft Auto
+        src: $DISC/gtadata
+        dst: $GAMEDIR/gtadata
+    - execute:
+        description: Adding the WRITE permission to the game files
+        command: chmod -R ug+w $GAMEDIR
+    - write_file:
+        file: $GAMEDIR/gta.bat
+        content: |
+          cd gtados
+          gta24.exe
+    - write_file:
+        file: $GAMEDIR/dosbox.conf
+        content: |
+          [sdl]
+          fullscreen = true
+
+          [render]
+          integer_scaling = off
+    - write_file:
+        file: $GAMEDIR/gtados/dig.ini
+        content: |
+          ;
+          ;Miles Sound System V3.50D of 14-Sep-96
+          ;
+
+          DEVICE      Creative Labs Sound Blaster 16 or AWE32
+          DRIVER      SB16.DIG
+          IO_ADDR     220h
+          IRQ         -1
+          DMA_8_BIT   -1
+          DMA_16_BIT  -1

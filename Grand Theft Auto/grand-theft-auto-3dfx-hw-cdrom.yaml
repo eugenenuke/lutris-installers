@@ -1,0 +1,112 @@
+name: "Grand Theft Auto"
+game_slug: grand-theft-auto
+version: CDROM
+slug: grand-theft-auto-3dfx-hw-cdrom
+runner: dosbox
+year: 1997
+notes: |
+  This installation script requires you to have the game's CD.
+
+  This installation script enables 3Dfx support, where Glide API calls are
+  transformed and passed through to modern 3D APIs for the actual rendering
+  and requires you to have a patched version of DosBox, see [1] and [2].
+  You can define a custom binary for DoxBox in the game configuration section
+  after installing the game.
+
+  Press F11 in the game to switch the game's resolution.
+
+  [1] https://www.vogons.org/viewtopic.php?t=16462
+  [2] https://aur.archlinux.org/packages/dosbox-openglide-svn
+
+script:
+  files:
+    - glide: "https://github.com/voyageur/openglide/raw/refs/heads/master/platform/dosbox/glide2x.ovl"
+    # - glide: "https://raw.githubusercontent.com/voyageur/openglide/c300160d0a8292bc04e79dd59e6cc178aa648dec/platform/dosbox/glide2x.ovl"
+    - cdimg: "N/A:Select the game's ISO/CUE file"
+
+  game:
+    main_file: $GAMEDIR/gta.bat
+    config_file: $GAMEDIR/dosbox.conf
+    prefix: $GAMEDIR
+    args: -c "imgmount d $cdimg -t iso"
+
+  installer:
+    - insert-disc:
+        requires: gta.bat
+    - copy:
+        description: Installing Grand Theft Auto
+        src: $DISC/gtados
+        dst: $GAMEDIR/gtados
+    - copy:
+        description: Installing Grand Theft Auto
+        src: $DISC/gtadata
+        dst: $GAMEDIR/gtadata
+    - execute:
+        description: Adding the WRITE permission to the game files
+        command: chmod -R ug+w $GAMEDIR
+    - execute:
+        command: mkdir -p $GAMEDIR/voodoo
+    - move:
+        src: glide
+        dst: $GAMEDIR/voodoo/glide2x.ovl
+    - write_file:
+        file: $GAMEDIR/gta.bat
+        content: |
+          CD GTADOS
+          CLS
+          GTAFX.EXE
+    - write_file:
+        file: $GAMEDIR/dosbox.conf
+        content: |
+          [sdl]
+          fullscreen = true
+
+          [glide]
+          glide  = true
+          lfb    = full_noaux
+          splash = false
+
+          [autoexec]
+          SET PATH=%PATH%;C:\VOODOO
+    - write_file:
+        file: $GAMEDIR/gtados/dig.ini
+        content: |
+          ;
+          ;Miles Sound System V3.50D of 14-Sep-96
+          ;
+
+          DEVICE      Creative Labs Sound Blaster 16 or AWE32
+          DRIVER      SB16.DIG
+          IO_ADDR     220h
+          IRQ         -1
+          DMA_8_BIT   -1
+          DMA_16_BIT  -1
+    - write_file:
+        file: $GAMEDIR/OpenGLid.ini
+        content: |
+          Configuration File for OpenGLide
+
+          Info:
+          Priority goes from 0(HIGH) to 5(IDLE)
+          Output resolution: 0 = original, 1.0-16.0 = scale factor, >16 = fixed width (height calculated automatically)
+          Texture Memory goes from 2 to 32
+          Frame Buffer Memory goes from 2 to 16
+          All other fields are boolean with 1(TRUE) and 0(FALSE)
+
+          Version=0.09rc9
+
+          [Options]
+          WrapperPriority=2
+          CreateWindow=0
+          InitFullScreen=0
+          Resolution=2.81
+          EnableMipMaps=0
+          IgnorePaletteChange=0
+          Wrap565to5551=1
+          EnablePrecisionFix=1
+          EnableMultiTextureEXT=1
+          EnablePaletteEXT=1
+          EnableVertexArrayEXT=0
+          TextureMemorySize=16
+          FrameBufferMemorySize=8
+          NoSplash=1

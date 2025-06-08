@@ -1,0 +1,93 @@
+name: "Grand Theft Auto"
+game_slug: grand-theft-auto
+version: CDROM
+slug: grand-theft-auto-3dfx-soft-cdrom
+runner: dosbox
+year: 1997
+notes: |
+  This installation script requires you to have the game's CD.
+
+  This installation script enables software-based 3Dfx support (3dfx Voodoo 1) [1].
+  At the moment of writing (mid 2025), lutris is using doxbox-staging v0.80.1,
+  but the software-based 3Dfx is available starting with v0.81.0, so you might
+  need to define a custom binary for DoxBox in the game configuration section
+  after installing the game.
+
+  Press F11 in the game to switch the game's resolution.
+
+  [1] https://www.dosbox-staging.org/releases/release-notes/0.81.0/?h=3dfx#3dfx-voodoo-1-emulation
+
+script:
+  files:
+    - glide: "https://github.com/dosbox-staging/dosbox-staging/files/11247639/GLIDE2X.zip"
+    - cdimg: "N/A:Select the game's ISO/CUE file"
+
+  game:
+    main_file: $GAMEDIR/gta.bat
+    config_file: $GAMEDIR/dosbox.conf
+    prefix: $GAMEDIR
+    args: -c "imgmount d $cdimg -t iso"
+
+  installer:
+    - insert-disc:
+        requires: gta.bat
+    - copy:
+        description: Installing Grand Theft Auto
+        src: $DISC/gtados
+        dst: $GAMEDIR/gtados
+    - copy:
+        description: Installing Grand Theft Auto
+        src: $DISC/gtadata
+        dst: $GAMEDIR/gtadata
+    - execute:
+        description: Adding the WRITE permission to the game files
+        command: chmod -R ug+w $GAMEDIR
+    - extract:
+        description: "Installing Glide2X DOS Driver"
+        file: glide
+        dst: $GAMEDIR/voodoo/
+    - write_file:
+        file: $GAMEDIR/gta.bat
+        content: |
+          REM ### 3Dfx Configuration ###
+          REM
+          REM Set the NO_SPLASH to 1 if you want to see the 3Dfx splash screen when it's activated
+          SET FX_GLIDE_NO_SPLASH=0
+          REM Uncomment the SHAMELESS_PLUG if you want to see the 3Dfx logo when 3Dfx is activated
+          REM SET FX_GLIDE_SHAMELESS_PLUG=1
+
+          CD GTADOS
+          CLS
+          GTAFX.EXE
+    - write_file:
+        file: $GAMEDIR/dosbox.conf
+        content: |
+          [sdl]
+          fullscreen = true
+
+          [render]
+          integer_scaling = off
+
+          [voodoo]
+          voodoo                    = true
+          voodoo_memsize            = 12
+          voodoo_threads            = auto
+          # set the filtering to `false` if the game is slow
+          voodoo_bilinear_filtering = true
+
+          [autoexec]
+          SET PATH=%PATH%;C:\VOODOO
+
+    - write_file:
+        file: $GAMEDIR/gtados/dig.ini
+        content: |
+          ;
+          ;Miles Sound System V3.50D of 14-Sep-96
+          ;
+
+          DEVICE      Creative Labs Sound Blaster 16 or AWE32
+          DRIVER      SB16.DIG
+          IO_ADDR     220h
+          IRQ         -1
+          DMA_8_BIT   -1
+          DMA_16_BIT  -1
