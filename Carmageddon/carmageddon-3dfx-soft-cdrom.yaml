@@ -1,0 +1,90 @@
+name: "Carmageddon"
+game_slug: carmageddon
+version: CDROM
+slug: carmageddon-3dfx-soft-cdrom
+runner: dosbox
+year: 1997
+notes: |
+  This installation script requires you to have the game's CD.
+
+  This installation script enables software-based 3Dfx support (3dfx Voodoo 1) [1].
+  At the moment of writing (mid 2025), lutris is using doxbox-staging v0.80.1,
+  but the software-based 3Dfx is available starting with v0.81.0, so you might
+  need to define a custom binary for DoxBox in the game configuration section
+  after installing the game.
+
+  Press F11 in the game to switch the game's resolution.
+
+  [1] https://www.dosbox-staging.org/releases/release-notes/0.81.0/?h=3dfx#3dfx-voodoo-1-emulation
+
+script:
+  files:
+    
+    # dosbox-staging offers glide v2.3 (https://github.com/dosbox-staging/dosbox-staging/files/11247639/GLIDE2X.zip)
+    # but the 3dfx_voodoo2_patch was build for glide v2.42
+    # the only source for that version of glide I managed to fine is this AD patch
+    - glide_v242: "https://www.3dfxzone.it/files/patches/3dfx/official/Archimedean-Dynasty_3dfx.zip"
+    # - 3dfx_voodoo1_patch: "https://download.glidos.net/Carmageddon/carv24rw.zip"
+    - 3dfx_voodoo1_patch: "https://www.3dfxzone.it/files/patches/3dfx/official/Carmageddon_3dfxGlide.zip"
+    - 3dfx_voodoo2_patch: "https://www.3dfxzone.it/files/patches/3dfx/official/Carmageddon_3dfx-Voodoo2.zip"
+    - cdimg: "N/A:Select the game's ISO/CUE file"
+
+  game:
+    main_file: $GAMEDIR/Voodo2C.exe
+    config_file: $GAMEDIR/dosbox.conf
+    prefix: $GAMEDIR
+    args: -c "imgmount d \"$cdimg\" -t iso"
+
+  installer:
+    - insert-disc:
+        requires: CARMA.EXE
+    - copy:
+        src: $DISC
+        dst: $GAMEDIR
+    - execute:
+        description: Adding the WRITE permission to the game files
+        command: chmod -R ug+w $GAMEDIR
+    - execute:
+        command: rm -rf "$GAMEDIR/CARM95" "$GAMEDIR/DATA/Paths.txt" "$GAMEDIR/DOSINST*" "$GAMEDIR/MOREINST.EXE"
+    - execute:
+        command: base64 -d <<< "QF0+DQpAiDSDXzhcVEUNCkA/e3VoDQpAVo8qMjaTcw0K" > $GAMEDIR/DATA/PATHS.TXT
+    - execute:
+        command: base64 -d <<< "DQpbRElHSVRBTF0NCkRldmljZU5hbWUgID0gU291bmQgQmxhc3RlciAxNi9BV0UzMiAgICANCkRldmljZUlSUSAgID0gNw0KRGV2aWNlRE1BICAgPSAxDQpEZXZpY2VQb3J0ICA9IDB4MjIwDQpEZXZpY2VJRCAgICA9IDB4ZTAxNg0KDQpbTUlESV0NCkRldmljZU5hbWUgID0gU291bmQgQmxhc3RlciBQcm8gICAgICAgICANCkRldmljZVBvcnQgID0gMHgzODgNCkRldmljZUlEICAgID0gMHhhMDAyDQo=" > $GAMEDIR/S3.INI
+    - extract:
+        description: "Installing Glide2X DOS Driver"
+        file: glide_v242
+        dst: $CACHE/voodoo/
+    - execute:
+        command: mkdir -p $GAMEDIR/voodoo
+    - move:
+        src: $CACHE/voodoo/GLIDE2X.OVL
+        dst: $GAMEDIR/voodoo/GLIDE2X.OVL
+    - extract:
+        description: "Installing carmageddon official 3Dfx patch for Voodoo and Voodoo Rush"
+        file: 3dfx_voodoo1_patch
+        dst: $GAMEDIR/
+    - extract:
+        description: "Installing carmageddon official 3Dfx patch for Voodoo 2"
+        file: 3dfx_voodoo2_patch
+        dst: $GAMEDIR/
+    - write_file:
+        file: $GAMEDIR/dosbox.conf
+        content: |
+          [sdl]
+          fullscreen = true
+
+          [render]
+          integer_scaling = off
+
+          [dosbox]
+          memsize = 64
+
+          [voodoo]
+          voodoo                    = true
+          voodoo_memsize            = 12
+          voodoo_threads            = auto
+          # set the filtering to `false` if the game is slow
+          voodoo_bilinear_filtering = true
+
+          [autoexec]
+          SET PATH=%PATH%;C:\VOODOO

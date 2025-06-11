@@ -1,0 +1,43 @@
+name: "Carmageddon"
+game_slug: carmageddon
+version: CDROM
+slug: carmageddon-cdrom
+runner: dosbox
+year: 1997
+notes: |
+  This installation script requires you to have the game's CD.
+
+  This installation script does not enable any 3Dfx support, so the game's
+  graphics is running on the CPU (==lower graphics quality). The good thing
+  is that it should run on any version of DosBox.
+
+script:
+  files:
+    - cdimg: "N/A:Select the game's ISO/CUE file"
+
+  game:
+    main_file: $GAMEDIR/CARMA.EXE
+    config_file: $GAMEDIR/dosbox.conf
+    prefix: $GAMEDIR
+    args: -c "imgmount d \"$cdimg\" -t iso"
+
+  installer:
+    - insert-disc:
+        requires: CARMA.EXE
+    - copy:
+        src: $DISC
+        dst: $GAMEDIR
+    - execute:
+        description: Adding the WRITE permission to the game files
+        command: chmod -R ug+w $GAMEDIR
+    - execute:
+        command: rm -rf "$GAMEDIR/CARM95" "$GAMEDIR/DATA/Paths.txt" "$GAMEDIR/DOSINST*" "$GAMEDIR/MOREINST.EXE"
+    - execute:
+        command: base64 -d <<< "QF0+DQpAiDSDXzhcVEUNCkA/e3VoDQpAVo8qMjaTcw0K" > $GAMEDIR/DATA/PATHS.TXT
+    - execute:
+        command: base64 -d <<< "DQpbRElHSVRBTF0NCkRldmljZU5hbWUgID0gU291bmQgQmxhc3RlciAxNi9BV0UzMiAgICANCkRldmljZUlSUSAgID0gNw0KRGV2aWNlRE1BICAgPSAxDQpEZXZpY2VQb3J0ICA9IDB4MjIwDQpEZXZpY2VJRCAgICA9IDB4ZTAxNg0KDQpbTUlESV0NCkRldmljZU5hbWUgID0gU291bmQgQmxhc3RlciBQcm8gICAgICAgICANCkRldmljZVBvcnQgID0gMHgzODgNCkRldmljZUlEICAgID0gMHhhMDAyDQo=" > $GAMEDIR/S3.INI
+    - write_file:
+        file: $GAMEDIR/dosbox.conf
+        content: |
+          [sdl]
+          fullscreen = true
