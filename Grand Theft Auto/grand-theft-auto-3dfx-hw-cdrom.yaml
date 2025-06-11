@@ -28,7 +28,7 @@ script:
     main_file: $GAMEDIR/gta.bat
     config_file: $GAMEDIR/dosbox.conf
     prefix: $GAMEDIR
-    args: -c "imgmount d $cdimg -t iso"
+    args: -c "imgmount d \"$cdimg\" -t iso"
 
   installer:
     - insert-disc:
