@@ -1,0 +1,100 @@
+name: Commandos - Beyond the Call of Duty
+game_slug: commandos-beyond-the-call-of-duty
+version: GOG
+slug: commandos-beyond-the-call-of-duty-gog
+runner: wine
+gogid: 1207662203
+description: |
+  This version includes a fix for notorious "Insert CD" [1] and
+  "Black Screen/No Briefing Videos" [2] issues, as well as an issue with
+  scrolling to right and down [3].
+
+  Many wine builds, including the default wine-ge-8-26-x86_64 don't play the
+  game's video tracks, and can even crash on playing the intro video, so the
+  intro video has been disabled. You can re-enable it from the game's menu if
+  you're using one of the wine builds that can play the videos (e.g. wine-10.7-staging-tkg-amd64 [4]).
+
+  lanczos2-sharp shader is used for upscaling, select "Configure cnc-ddraw"
+  from the game menu to pick another shader or apply other ddraw tweaks.
+
+  The Hi-Res hack [5] is installed, but not applied out of the box, you can run
+  it from the game's menu.
+
+  Components used: wine x64 + cnc_ddraw + hi-res hack + native amstream and quartz [6]
+
+  [1] https://www.gog.com/forum/commandos_series/insert_commandos_cd1
+  [2] https://www.gog.com/forum/commandos_series/behind_enemy_lines_black_screen
+  [3] https://github.com/FunkyFr3sh/cnc-ddraw/
+  [4] https://github.com/Kron4ek/Wine-Builds/releases/download/10.7/wine-10.7-staging-tkg-amd64.tar.xz
+  [5] https://modelrail.otenko.com/electronics/commandos-behind-enemy-lines-resolution-fix
+  [6] https://appdb.winehq.org/objectManager.php?sClass=version&iId=261#notes
+
+year: 1999
+
+script:
+  game:
+    exe: drive_c/GOG Games/Commandos BCD/coman_mp.exe
+    prefix: $GAMEDIR
+    launch_configs:
+      - name: "Apply the Hi-Res hack"
+        exe: $GAMEDIR/drive_c/GOG Games/Commandos BCD/CommandosResolutionHack.exe
+      - name: "Disable the Intro video (fixes black screen crash on start)"
+        exe: $GAMEDIR/drive_c/GOG Games/Commandos BCD/disable_intro.bat
+      - name: "Enable the Intro video"
+        exe: $GAMEDIR/drive_c/GOG Games/Commandos BCD/enable_intro.bat
+      - name: "Configure cnc-ddraw"
+        exe: $GAMEDIR/drive_c/GOG Games/Commandos BCD/cnc-ddraw config.exe
+  wine:
+    overrides:
+      ddraw.dll: n
+
+  files:
+    - gogsetup: "N/A:Select the gog setup exe"
+    - hires_hack: "https://www.otenko.com/commandos/CommandosResolutionHack.zip"
+    - cnc_ddraw: "https://github.com/FunkyFr3sh/cnc-ddraw/releases/latest/download/cnc-ddraw.zip"
+
+  installer:
+    - task:
+        name: create_prefix
+        prefix: $GAMEDIR
+    - task:
+        description: Installing Commandos - Behind Enemy Lines
+        name: wineexec
+        executable: gogsetup
+        args: /silent /nogui /suppressmsgboxes
+    - extract:
+        description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
+        file: cnc_ddraw
+        dst: drive_c/GOG Games/Commandos BCD/
+    - extract:
+        description: Installing the Hi-Res Hack
+        file: hires_hack
+        dst: drive_c/GOG Games/Commandos BCD/
+    - write_config:
+        description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
+        file: $GAMEDIR/drive_c/GOG Games/Commandos BCD/ddraw.ini
+        data:
+          ddraw:
+            maintas: true
+            fullscreen: true
+            shader: Shaders\interpolation\lanczos2-sharp.glsl
+            renderer: opengl
+            maxgameticks: -1
+    - task:
+        description: Fixing videoplayback/no-cd issues (native amstream.dll)
+        name: winetricks
+        app: amstream
+    - task:
+        description: Fixing videoplayback/no-cd issues (native quartz.dll)
+        name: winetricks
+        app: quartz
+    - execute:
+        command: mv "$GAMEDIR/drive_c/GOG Games/Commandos BCD/VIDEO/h_intro.avi" "$GAMEDIR/drive_c/GOG Games/Commandos BCD/VIDEO/h_intro.avi.off"
+    - write_file:
+        file: $GAMEDIR/drive_c/GOG Games/Commandos BCD/enable_intro.bat
+        content: |
+          ren "$GAMEDIR/drive_c/GOG Games/Commandos BCD/VIDEO/h_intro.avi.off" "h_intro.avi"
+    - write_file:
+        file: $GAMEDIR/drive_c/GOG Games/Commandos BCD/disable_intro.bat
+        content: |
+          ren "$GAMEDIR/drive_c/GOG Games/Commandos BCD/VIDEO/h_intro.avi" "h_intro.avi.off"
