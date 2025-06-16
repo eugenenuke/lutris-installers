@@ -1,0 +1,74 @@
+name: Commandos - Behind Enemy Lines
+game_slug: commandos-behind-enemy-lines
+version: GOG
+slug: commandos-behind-enemy-lines-gog
+runner: wine
+gogid: 1207662193
+description: |
+  This version includes a fix for notorious "Insert CD" [1] and
+  "Black Screen/No Briefing Videos" [2] issues, as well as an issue with
+  scrolling to right and down [3].
+
+  The default wine-ge-8-26-x86_64 still does't show the game's video tracks,
+  use system's wine, proton or wine-10.7-staging-tkg-amd64 [4].
+
+  lanczos2-sharp shader is used for upscaling, select "Configure cnc-ddraw"
+  from Lutris' start menu to pick another shader or apply other ddraw tweaks.
+
+  Components used: wine x64 + cnc_ddraw + native amstream and quartz [5]
+
+  [1] https://www.gog.com/forum/commandos_series/insert_commandos_cd1
+  [2] https://www.gog.com/forum/commandos_series/behind_enemy_lines_black_screen
+  [3] https://github.com/FunkyFr3sh/cnc-ddraw/
+  [4] https://github.com/Kron4ek/Wine-Builds/releases/download/10.7/wine-10.7-staging-tkg-amd64.tar.xz
+  [5] https://appdb.winehq.org/objectManager.php?sClass=version&iId=261#notes
+
+year: 1998
+
+script:
+  game:
+    exe: drive_c/GOG Games/Commandos/comandos_w10.exe
+    prefix: $GAMEDIR
+    launch_configs:
+      - name: "Configure cnc-ddraw"
+        exe: drive_c/GOG Games/Commandos/cnc-ddraw config.exe
+
+  wine:
+    overrides:
+      ddraw.dll: n
+
+  files:
+    - gogsetup: "N/A:Select the gog setup exe"
+    - cnc_ddraw: "https://github.com/FunkyFr3sh/cnc-ddraw/releases/latest/download/cnc-ddraw.zip"
+
+  installer:
+    - task:
+        name: create_prefix
+        prefix: $GAMEDIR
+    - task:
+        description: Installing Commandos - Behind Enemy Lines
+        name: wineexec
+        executable: gogsetup
+        args: /silent /nogui /suppressmsgboxes
+    - extract:
+        description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
+        file: cnc_ddraw
+        dst: drive_c/GOG Games/Commandos/
+    - write_config:
+        description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
+        file: $GAMEDIR/drive_c/GOG Games/Commandos/ddraw.ini
+        data:
+          ddraw:
+            maintas: true
+            fullscreen: true
+            shader: Shaders\interpolation\lanczos2-sharp.glsl
+            renderer: opengl
+            maxgameticks: -1
+    - task:
+        description: Fixing videoplayback/no-cd issues (native amstream.dll)
+        name: winetricks
+        app: amstream
+    - task:
+        description: Fixing videoplayback/no-cd issues (native quartz.dll)
+        name: winetricks
+        app: quartz
