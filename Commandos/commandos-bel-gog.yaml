@@ -9,19 +9,23 @@ description: |
   "Black Screen/No Briefing Videos" [2] issues, as well as an issue with
   scrolling to right and down [3].
 
-  The default wine-ge-8-26-x86_64 still does't show the game's video tracks,
+  The default wine-ge-8-26-x86_64 still does't play the game's video tracks,
   use system's wine, proton or wine-10.7-staging-tkg-amd64 [4].
 
   lanczos2-sharp shader is used for upscaling, select "Configure cnc-ddraw"
-  from Lutris' start menu to pick another shader or apply other ddraw tweaks.
+  from the game menu to pick another shader or apply other ddraw tweaks.
 
-  Components used: wine x64 + cnc_ddraw + native amstream and quartz [5]
+  The Hi-Res hack [5] is installed, but not applied out of the box, you can run
+  it from the game's menu.
+
+  Components used: wine x64 + cnc_ddraw + hi-res hack + native amstream and quartz [6]
 
   [1] https://www.gog.com/forum/commandos_series/insert_commandos_cd1
   [2] https://www.gog.com/forum/commandos_series/behind_enemy_lines_black_screen
   [3] https://github.com/FunkyFr3sh/cnc-ddraw/
   [4] https://github.com/Kron4ek/Wine-Builds/releases/download/10.7/wine-10.7-staging-tkg-amd64.tar.xz
-  [5] https://appdb.winehq.org/objectManager.php?sClass=version&iId=261#notes
+  [5] https://modelrail.otenko.com/electronics/commandos-behind-enemy-lines-resolution-fix
+  [6] https://appdb.winehq.org/objectManager.php?sClass=version&iId=261#notes
 
 year: 1998
 
@@ -30,8 +34,10 @@ script:
     exe: drive_c/GOG Games/Commandos/comandos_w10.exe
     prefix: $GAMEDIR
     launch_configs:
+      - name: "Apply the Hi-Res hack"
+        exe: $GAMEDIR/drive_c/GOG Games/Commandos/CommandosResolutionHack.exe
       - name: "Configure cnc-ddraw"
-        exe: drive_c/GOG Games/Commandos/cnc-ddraw config.exe
+        exe: $GAMEDIR/drive_c/GOG Games/Commandos/cnc-ddraw config.exe
 
   wine:
     overrides:
@@ -39,6 +45,7 @@ script:
 
   files:
     - gogsetup: "N/A:Select the gog setup exe"
+    - hires_hack: "https://www.otenko.com/commandos/CommandosResolutionHack.zip"
     - cnc_ddraw: "https://github.com/FunkyFr3sh/cnc-ddraw/releases/latest/download/cnc-ddraw.zip"
 
   installer:
@@ -53,6 +60,10 @@ script:
     - extract:
         description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
         file: cnc_ddraw
+        dst: drive_c/GOG Games/Commandos/
+    - extract:
+        description: Installing the Hi-Res Hack
+        file: hires_hack
         dst: drive_c/GOG Games/Commandos/
     - write_config:
         description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
