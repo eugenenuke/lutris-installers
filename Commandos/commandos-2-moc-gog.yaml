@@ -1,0 +1,67 @@
+name: Commandos 2 - Men of Courage
+game_slug: commandos-2-men-of-courage
+version: GOG
+slug: commandos-2-men-of-courage-gog
+runner: wine
+gogid: 1207662213
+description: |
+  The in-game videos use audio/x-raw (no compression) and video/x-indeo (IV50) codecs,
+  make sure you have a 32-bit version of libgstlibav.so installed on your host system
+  or have it included in your version of wine/proton, otherwise the videos will be
+  skipped or the game will hung on the start. 
+
+  libgstlibav.so is included in lib32-gst-plugins-ugly (Arch/AUR) and
+  gstreamer1.0-libav:i386 (Ubuntu/Debian). Consult Google for other Linux distributions
+  and for the installation steps.
+
+  PS: The default wine-ge-8-26-x86_64 won't be able to play the in-game videos,
+  use `ge-proton` (libgstlibav.so is bundled) or system's wine.
+
+  lanczos2-sharp shader is used for upscaling [1], select "Configure cnc-ddraw"
+  from the game menu to pick another shader or apply other ddraw tweaks.
+
+  Components used: wine x64 + cnc_ddraw + libgstlibav.so 32-bit
+
+  [1] https://github.com/FunkyFr3sh/cnc-ddraw/
+
+year: 2001
+
+script:
+  game:
+    exe: drive_c/GOG Games/Commandos 2/comm2.exe
+    prefix: $GAMEDIR
+    launch_configs:
+      - name: "Configure cnc-ddraw"
+        exe: $GAMEDIR/drive_c/GOG Games/Commandos/cnc-ddraw config.exe
+  
+  wine:
+    overrides:
+      ddraw.dll: n
+
+  files:
+    - gogsetup: "N/A:Select the gog setup exe"
+    - cnc_ddraw: "https://github.com/FunkyFr3sh/cnc-ddraw/releases/latest/download/cnc-ddraw.zip"
+
+  installer:
+    - task:
+        name: create_prefix
+        prefix: $GAMEDIR
+    - task:
+        description: Installing Commandos 2 - Men of Courage
+        name: wineexec
+        executable: gogsetup
+        args: /silent /nogui /suppressmsgboxes
+    - extract:
+        description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
+        file: cnc_ddraw
+        dst: drive_c/GOG Games/Commandos 2/
+    - write_config:
+        description: Fixing scroll rigth/down issues (cnc_ddraw.dll)
+        file: $GAMEDIR/drive_c/GOG Games/Commandos 2/ddraw.ini
+        data:
+          ddraw:
+            maintas: true
+            fullscreen: true
+            shader: Shaders\interpolation\lanczos2-sharp.glsl
+            renderer: opengl
+            maxgameticks: -1
