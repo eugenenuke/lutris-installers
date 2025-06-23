@@ -23,7 +23,7 @@ script:
     arch: win64
 
   files:
-    - curl-od: https://raw.githubusercontent.com/eugenenuke/onedrive-downloader/refs/heads/main/curl_onedrive_url.sh
+    - curl-od: https://raw.githubusercontent.com/eugenenuke/onedrive-downloader/refs/tags/v1.0/fetch_onedrive_url.sh
 
   require-binaries: curl, base64, grep, tr
 
@@ -75,9 +75,9 @@ script:
     - merge:
         src: $DISC/darkomen/movies
         dst: $GAMEDIR/drive_c/Program Files (x86)/Dark Omen/movies
-    - chmodx: $CACHE/curl_od/curl_onedrive_url.sh
+    - chmodx: $CACHE/curl_od/fetch_onedrive_url.sh
     - execute:
-        file: $CACHE/curl_od/curl_onedrive_url.sh
+        file: $CACHE/curl_od/fetch_onedrive_url.sh
         args: https://1drv.ms/u/s!AsyWBCOxh51ViNQVmiH8FtY80TnY7w?e=AKawWz
     - extract:
         description: "Installing DO Mod Pack 2020"
