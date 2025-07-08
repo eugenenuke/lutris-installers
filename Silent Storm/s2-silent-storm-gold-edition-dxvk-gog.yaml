@@ -1,0 +1,42 @@
+name: "S2: Silent Storm Gold Edition"
+game_slug: s2-silent-storm-gold-edition
+version: GOG
+slug: s2-silent-storm-gold-edition-dxvk-gog
+runner: wine
+gogid: 1207659058
+year: 2004
+notes: |
+  The GOG version of the game includes the "Silent Storm: Sentinels" expansion
+  you can pick the game to start from the Lutris menu.
+
+  DXVK (DirectX 9 to Vulkan wrapper) doesn't work with the GOG provided d3d9.dll,
+  so its d3d9.dll is intentionally disabled (renamed) but DXVK is kept enabled.
+
+script:
+  game:
+    exe: drive_c/GOG Games/Silent Storm Gold/Silent Storm/game.exe
+    prefix: $GAMEDIR
+    launch_configs:
+      - name: "S3: Silent Storm - Sentinels"
+        exe: $GAMEDIR/drive_c/GOG Games/Silent Storm Gold/Silent Storm Sentinels/Sentinels.exe
+        working_dir: $GAMEDIR/drive_c/GOG Games/Silent Storm Gold/Silent Storm Sentinels
+
+  files:
+    - gogsetup: "N/A:Select the gog setup exe"
+
+  installer:
+    - task:
+        description: Creating Wine prefix
+        name: create_prefix
+        prefix: $GAMEDIR
+    - task:
+        description: "Installing S2: Silent Storm Gold Edition"
+        name: wineexec
+        executable: gogsetup
+        args: /silent /nogui /suppressmsgboxes
+    - move:
+        src: $GAMEDIR/drive_c/GOG Games/Silent Storm Gold/Silent Storm/d3d9.dll
+        dst: $GAMEDIR/drive_c/GOG Games/Silent Storm Gold/Silent Storm/d3d9.dll.off
+    - move:
+        src: $GAMEDIR/drive_c/GOG Games/Silent Storm Gold/Silent Storm Sentinels/d3d9.dll
+        dst: $GAMEDIR/drive_c/GOG Games/Silent Storm Gold/Silent Storm Sentinels/d3d9.dll.off
